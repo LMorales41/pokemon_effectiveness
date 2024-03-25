@@ -6,7 +6,9 @@ import numpy as np
 types_table = Table.read_table('data/types.csv')
 pokemon_types = Table.read_table('data/pokemon_types.csv')
 pkmn = Table.read_table('data/pokemon_species.csv')
+effective_chart = Table.read_table('data/type_efficacy.csv')
 pkmn = pkmn.select('id', 'identifier')
+
 
 #First type should be guaranteed for every pokemon
 forms_excluded_array = pokemon_types.where('pokemon_id', are.below_or_equal_to(898))
@@ -33,17 +35,20 @@ pkmn = pkmn.with_column('type2', slot2_array)
 #End product is more readable table
 pkmn_clean = pkmn.with_columns('type1', id_into_string(pkmn.column('type1')), 'type2', id_into_string(pkmn.column('type2')))
 pkmn_clean = pkmn_clean.relabeled('id', 'pokedex').relabeled('identifier', 'species')
-
+effective_chart = effective_chart.relabeled('damage_type_id', 'attacking_type').relabeled('target_type_id', 'defending_type').relabeled('damage_factor', 'multiplier')
+effective_chart = effective_chart.with_columns('attacking_type', id_into_string(effective_chart.column('attacking_type')), 'defending_type', id_into_string(effective_chart.column('defending_type')), 'multiplier', multiplier_conversion(effective_chart.column('multiplier')))
 """END OF SORTING DATA"""
 
 # I like turtles
 
 
 """BEGINNING OF PROGRAM"""
-pokemon_selected = pkmn_clean.where('species', are.equal_to('porygon'))
+pokemon_selected = pkmn_clean.where('species', are.equal_to('charizard'))
 type_1 = pokemon_selected.column('type1')[0]
 type_2 = pokemon_selected.column('type2')[0]
 types_to_test = np.array([type_1, type_2])
 
 
-print(types_to_test)
+
+
+#print("Your defensive spread:\n", "You resist: ", resistances, "\nYou are neutral against: ", neutral, "\nYou are weak against: ", weaknesses, "\nYour STAB covers: ", offense_spread)
