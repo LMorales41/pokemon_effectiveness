@@ -5,7 +5,7 @@ import numpy as np
 ## 9 = steel 10 = fire 11 = water 12 = grass
 ## 13 = electric 14 = psychic 15 = ice 16 = dragon
 ## 17 = dark 18 = fairy
-
+#lalala
 def get_data_type(tbl):
     ### This checks every column for what the data type in that column is ###
 
