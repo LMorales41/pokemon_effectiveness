@@ -131,17 +131,19 @@ def offensive_matchups(multiplier_table, pokemon_types):
     
     #Generates arrays based on previous table created
     super_effective_against = types_table.where('multiplier', are.equal_to(2)).column('defending_type')
-    resist_or_immune_to = types_table.where('multiplier', are.below_or_equal_to(0.5)).column('defending_type')
+    #resist_or_immune_to = types_table.where('multiplier', are.below_or_equal_to(0.5)).column('defending_type')
     neutral_against = types_table.where('multiplier', are.equal_to(1)).column('defending_type')
+    not_very_effective_against = types_table.where('multiplier', are.equal_to(0.5)).column('defending_type')
+    cannot_hit = types_table.where('multiplier', are.equal_to(0)).column('defending_type')
 
-    #Can split resistances/immunities with these two lines
-    #not_very_effective_against = types_table.where('multiplier', are.equal_to(0.5)).column('defending_type')
-    #cannot_hit = resist_or_immune_to = types_table.where('multiplier', are.equal_to(0)).column('defending_type')
-    #return super_effective_against, neutral_against, not_very_effective_against, cannot_hit
+    #Can split resistances/immunities 
+    not_very_effective_against = remove_and_sort(not_very_effective_against)
+    cannot_hit = remove_and_sort(cannot_hit)
     super_effective_against = remove_and_sort(super_effective_against)
     neutral_against = remove_and_sort(neutral_against)
-    resist_or_immune_to = remove_and_sort(resist_or_immune_to)
-    return super_effective_against, neutral_against, resist_or_immune_to
+    #resist_or_immune_to = remove_and_sort(resist_or_immune_to)
+    #return super_effective_against, neutral_against, resist_or_immune_to
+    return super_effective_against, neutral_against, not_very_effective_against, cannot_hit
         
 
 def defensive_matchups(multiplier_table, pokemon_types):
@@ -160,15 +162,20 @@ def defensive_matchups(multiplier_table, pokemon_types):
     
     #Generates arrays based on previous table created
     hit_super_effective_by = types_table.where('multiplier', are.equal_to(2)).column('attacking_type')
-    resist_or_immune_to = types_table.where('multiplier', are.below_or_equal_to(0.5)).column('attacking_type')
+    #resist_or_immune_to = types_table.where('multiplier', are.below_or_equal_to(0.5)).column('attacking_type')
+    resist = types_table.where('multiplier', are.equal_to(0.5)).column('attacking_type')
+    immune_to = types_table.where('multiplier', are.equal_to(0)).column('attacking_type')
     neutral = types_table.where('multiplier', are.equal_to(1)).column('attacking_type')
 
     #Sorting
     hit_super_effective_by = remove_and_sort(hit_super_effective_by)
     neutral = remove_and_sort(neutral)
-    resist_or_immune_to = remove_and_sort(resist_or_immune_to)
+    #resist_or_immune_to = remove_and_sort(resist_or_immune_to)
+    resist = remove_and_sort(resist)
+    immune_to = remove_and_sort(immune_to)
 
-    return hit_super_effective_by, neutral, resist_or_immune_to 
+    #return hit_super_effective_by, neutral, resist_or_immune_to 
+    return hit_super_effective_by, neutral, resist, immune_to
 
 
 def get_multiplier_value(a_type, d_type, effective_chart):
@@ -176,7 +183,7 @@ def get_multiplier_value(a_type, d_type, effective_chart):
     return effective_chart.where('attacking_type', are.equal_to(a_type)).where('defending_type', are.equal_to(d_type)).column('multiplier')[0]
 
 
-def print_effectivenesses(se, neutral, nve):
+def print_effectivenesses(se, neutral, nve, immune):
     """Prints out what your moves are effective/neutral/ineffective against"""
     print("Your moves are super effective against:", end=' ')
     for x in se:
@@ -192,15 +199,21 @@ def print_effectivenesses(se, neutral, nve):
             print(', ', end='')
 
     
-    print("\nYour moves are resisted (or immuned by):", end='')
+    print("\nYour moves are resisted by:", end='')
     for x in nve:
+        print(x, end='')
+        if x != len(nve) - 1:
+            print(', ', end='')
+    print("\n")
+    print("\nYour moves cannot hit:", end='')
+    for x in immune:
         print(x, end='')
         if x != len(nve) - 1:
             print(', ', end='')
     print("\n")
 
 
-def print_resistances(se, neutral, nve):
+def print_resistances(se, neutral, nve, immune):
     # Does not account for abilities like Water Absorb, Levitate, Dry Skin which change multipliers drastically depending on conditions
     # Can be further optimized, current output is not accounting for when 2 types multipliers cause something to turn neutral or super effective or immune
     """Prints what types your Pokemon is weak/neutral/resistant to"""
@@ -218,26 +231,33 @@ def print_resistances(se, neutral, nve):
             print(', ', end='')
 
     
-    print("\nYou resist or are immune to:", end='')
+    print("\nYou resist:", end='')
     for x in nve:
         print(x, end='')
         if x != len(nve) - 1:
+            print(', ', end='')
+
+
+    print("\nYou are immune to:", end='')
+    for x in immune:
+        print(x, end='')
+        if x != len(immune) - 1:
             print(', ', end='')
     print("\n")
 
 
 def stab_effectivenesses(effective_chart, types_to_test, purpose):
     """Combines type_matchups, offensive_matchups, and print_effectivenesses functions into one clean callable line"""
-    super_effective, neutral, not_very_effective = type_matchups(effective_chart, types_to_test, purpose)
-    print_effectivenesses(super_effective, neutral, not_very_effective)
-    return super_effective, neutral, not_very_effective
+    super_effective, neutral, not_very_effective, immune = type_matchups(effective_chart, types_to_test, purpose)
+    print_effectivenesses(super_effective, neutral, not_very_effective, immune)
+    return super_effective, neutral, not_very_effective, immune
 
 
 def resistances(effective_chart, types_to_test, purpose):
     """Combines type_matchups, defensive_matchups, and print_resistances functions into one clean callable line"""
-    super_effective, neutral, not_very_effective = type_matchups(effective_chart, types_to_test, purpose)
-    print_resistances(super_effective, neutral, not_very_effective)
-    return super_effective, neutral, not_very_effective
+    super_effective, neutral, not_very_effective, immune = type_matchups(effective_chart, types_to_test, purpose)
+    print_resistances(super_effective, neutral, not_very_effective, immune)
+    return super_effective, neutral, not_very_effective, immune
 
 
 def get_move_types(moveset, move_tbl):
