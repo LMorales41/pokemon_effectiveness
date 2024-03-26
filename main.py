@@ -1,4 +1,5 @@
 from src.type_functions import *
+from src.program import *
 from datascience import *
 import numpy as np
 
@@ -40,14 +41,13 @@ effective_chart = effective_chart.relabeled('damage_type_id', 'attacking_type').
 effective_chart = effective_chart.with_columns('attacking_type', id_into_string(effective_chart.column('attacking_type')), 'defending_type', id_into_string(effective_chart.column('defending_type')), 'multiplier', multiplier_conversion(effective_chart.column('multiplier')))
 """END OF SORTING DATA"""
 
-# I like turtles
+# I like squirtles
 
 
 """BEGINNING OF PROGRAM"""
-pokemon_selected = pkmn_clean.where('species', are.equal_to('porygon'))
-type_1 = pokemon_selected.column('type1')[0]
-type_2 = pokemon_selected.column('type2')[0]
-types_to_test = np.array([type_1, type_2])
+#User selects pokemon, then we grab its matchups
+lc_pkmn = intro_loop(pkmn_clean)
+lc_pkmn_types = get_types(pkmn_clean, lc_pkmn)
 
-stab_effectivenesses(effective_chart, types_to_test, 'offense')
-resistances(effective_chart, types_to_test, 'defensive')
+stab_effectivenesses(effective_chart, lc_pkmn_types, 'offense')
+resistances(effective_chart, lc_pkmn_types, 'defensive')
