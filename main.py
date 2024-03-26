@@ -46,8 +46,8 @@ effective_chart = effective_chart.with_columns('attacking_type', id_into_string(
 
 """BEGINNING OF PROGRAM"""
 #User selects pokemon, then we grab its matchups
-lc_pkmn = intro_loop(pkmn_clean)
-lc_pkmn_types = get_types(pkmn_clean, lc_pkmn)
+#lc_pkmn = intro_loop(pkmn_clean)
+#lc_pkmn_types = get_types(pkmn_clean, lc_pkmn)
 
-stab_effectivenesses(effective_chart, lc_pkmn_types, 'offense')
-resistances(effective_chart, lc_pkmn_types, 'defensive')
+#stab_effectivenesses(effective_chart, lc_pkmn_types, 'offense')
+#resistances(effective_chart, lc_pkmn_types, 'defensive')
