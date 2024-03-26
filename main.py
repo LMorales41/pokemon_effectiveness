@@ -30,11 +30,13 @@ learnable_moves = setup_learnable_moves_table(learnable_moves)
     # The matchups its STAB (Same Type Attack Bonus) has
     # Its defensive matchups
     # Its moveset type matchup
-    # Generated moveset for maximum coverage (theoretically)
+    # Generated moveset for maximum coverage (theoretically) - not implemented yet
 
-#intro_loop(pkmn_clean, effective_chart, moves, learnable_moves)
-moveset = learnable_moves_for_selected(learnable_moves, moves, 233)
-moveset_types = get_move_types(moveset, moves)
-get_maximum_coverage(moveset_types, effective_chart)
+intro_loop(pkmn_clean, effective_chart, moves, learnable_moves)
 
 
+#se = ['electric', 'grass', 'ground', 'rock', 'water']
+#neutral = ['bug', 'dark', 'dragon', 'electric', 'fairy', 'fighting', 'flying', 'ghost', 'ground', 'normal', 'poison', 'psychic', 'rock']
+#nve = ['bug', 'fairy', 'fire', 'grass', 'ice', 'steel', 'water']
+
+#combine_effectiveness_multipliers_defense(types_to_test, se, neutral, nve, effective_chart)

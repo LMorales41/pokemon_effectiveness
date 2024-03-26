@@ -14,24 +14,38 @@ def intro_loop(pkmn_tbl, effective_chart, moves, learnable_moves):
         if pkmn_tbl.where('species', are.equal_to(lc_pkmn)).num_rows >= 1:
             lc_pkmn_pokedex = pkmn_tbl.where('species', are.equal_to(lc_pkmn)).column('pokedex')[0]
             lc_pkmn_types = get_types(pkmn_tbl, lc_pkmn)
-            #stab_effectivenesses(effective_chart, lc_pkmn_types, 'offense')
             resistances(effective_chart, lc_pkmn_types, 'defensive')
             moveset_cont = input("Would you like to check the effectiveness of this Pokemon's moveset? (Y/N)")
             if (moveset_cont == 'y' or moveset_cont == 'Y'):
                 #User gives the pokemon a moveset, this checks its general coverage
                 moveset, moveset_types = get_moveset_info(moves)
                 stab_effectivenesses(effective_chart, moveset_types, 'offense')
-            generate_cont = input("Would you like to generate a moveset for maximum coverage? (Y/N)")
-            if (generate_cont == 'y' or generate_cont == 'Y'):
-                pkmn_moveset_all = learnable_moves_for_selected(learnable_moves, moves, lc_pkmn_pokedex)
-                desired_moveset = generate_moveset(pkmn_moveset_all, moves)
+                print("Your total movepool coverages: ")
+                moveset = learnable_moves_for_selected(learnable_moves, moves, lc_pkmn_pokedex)
+                print(moveset)
+                moveset_types = get_move_types(moveset, moves)
+                get_maximum_coverage(moveset_types, effective_chart)
+            #generate_cont = input("Would you like to generate a moveset for maximum coverage? (Y/N)")
+            #if (generate_cont == 'y' or generate_cont == 'Y'):
+                #pkmn_moveset_all = learnable_moves_for_selected(learnable_moves, moves, lc_pkmn_pokedex)
+                #desired_moveset = generate_moveset(pkmn_moveset_all, moves)
             break
         else:
             print("That was not a valid pokemon, please try again! (Up to Gen 8 - Pokemon Sword and Shield, no forms!)")
 
 def get_moveset_info(moves):
-    move_count = input("How many moves will your Pokemon have?\n")
-    move_count = int(move_count)
+    flag = True
+    while flag:
+        try:
+            move_count = input("How many moves will your Pokemon have?\n")
+            move_count = int(move_count)
+            if move_count > 4:
+                print("You cannot have more than 4 moves!")
+                continue
+            flag = False
+        except ValueError:
+            print("That is not a valid integer, please try again.")
+
     moveset = []
     while len(moveset) < move_count:
         my_move = input("Enter move: ")
@@ -43,7 +57,7 @@ def get_moveset_info(moves):
         else:
             print("Adding that move is not legal, please enter again. ")
 
-    moveset_types = get_moveset_types(moveset, moves)
+    moveset_types = get_move_types(moveset, moves)
     return moveset, moveset_types 
 
 def get_types(pkmn_clean, lc_pkmn ):
