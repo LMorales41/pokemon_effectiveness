@@ -27,12 +27,6 @@ def check_move_legality(move, moves_tbl):
     else:
         return False
 
-def get_moveset_types(moveset, moves_tbl):
-    """Gets array with moves, returns array with their types"""
-    types_arr = []
-    for move in moveset:
-        types_arr.append(moves_tbl.where('move_name', are.equal_to(move)).column('type')[0])
-    return types_arr
 
 
     
@@ -192,5 +186,42 @@ def resistances(effective_chart, types_to_test, purpose):
     super_effective, neutral, not_very_effective = type_matchups(effective_chart, types_to_test, purpose)
     print_resistances(super_effective, neutral, not_very_effective)
 
-
+def get_move_types(moveset, move_tbl):
+    """Gets array with moves, returns array with their types"""
+    types_learned = []
+    already_checked = set()
+    for move in moveset:
+        move_type = move_tbl.where('move_name', are.equal_to(move)).column('type')[0]
+        if move_type not in already_checked:
+            types_learned.append(move_type)
+            already_checked.add(move_type)
+    return types_learned
     
+
+
+
+
+
+
+def get_maximum_coverage (types_learned, effectiveness_chart):
+    #Should be string
+    move_types = []
+    #Should be int
+    move_effective_against_ints = []
+    for x in types_learned:
+        effective_against = effectiveness_chart.where('attacking_type', are.equal_to(x)).where('multiplier', are.above_or_equal_to(1)).num_rows
+        move_types.append(x)
+        move_effective_against_ints.append(effective_against)
+    print('move type len: ', len(move_types))
+    print('move_effectiveness len: ', len(move_effective_against_ints))
+    print(move_types)
+    print(move_effective_against_ints)
+    tuple_test = list(zip(move_types, move_effective_against_ints))
+    tuple_test = sorted(tuple_test, key=lambda x: x[1], reverse=True)
+    print(tuple_test)
+
+
+
+
+
+        
