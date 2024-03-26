@@ -3,15 +3,15 @@
 ## 9 = steel 10 = fire 11 = water 12 = grass
 ## 13 = electric 14 = psychic 15 = ice 16 = dragon
 ## 17 = dark 18 = fairy
-pokemon_types = [
+from datascience import *
+PKMN_TYPES = [
     'normal', 'fighting', 'flying', 'poison', 'ground', 'rock', 'bug', 'ghost', 
     'steel', 'fire', 'water', 'grass', 'electric', 'psychic', 'ice', 'dragon', 
     'dark', 'fairy'
 ]
 
-def unique_types(arr):
-    for row in arr:
-        row = list(set(row))
+def remove_and_sort(arr):
+    arr = sorted(set(arr))
 
 
 def id_into_string(type_id):
@@ -54,9 +54,38 @@ def type_matchups(multiplier_table, pokemon_types, purpose):
         return defensive_matchups(multiplier_table, pokemon_types)
     
 def offensive_matchups(multiplier_table, pokemon_types):
+    strong = []
+    neutral = []
+    weak = []
+    types_table = Table().with_columns('attacking_type', [], 'defending_type', [], 'multiplier', [])
+    print(pokemon_types)
+
+    #Grabs table with one/two types and all defending types
+    for attacking_type in pokemon_types:
+        storage_table = multiplier_table.where('attacking_type', are.equal_to(attacking_type))
+        types_table.append(storage_table)
     
+    #Generates arrays based on previous table created
+    super_effective_against = types_table.where('multiplier', are.equal_to(2)).column('defending_type')
+    resist_or_immune_to = types_table.where('multiplier', are.below_or_equal_to(0.5)).column('defending_type')
+    neutral_against = types_table.where('multiplier', are.equal_to(1)).column('defending_type')
+
+    #Can split resistances/immunities with these two lines
+    #not_very_effective_against = types_table.where('multiplier', are.equal_to(0.5)).column('defending_type')
+    #cannot_hit = resist_or_immune_to = types_table.where('multiplier', are.equal_to(0)).column('defending_type')
+    #return super_effective_against, neutral_against, not_very_effective_against, cannot_hit
+    remove_and_sort(super_effective_against)
+    remove_and_sort(neutral_against)
+    remove_and_sort(resist_or_immune_to)
+    return super_effective_against, neutral_against, resist_or_immune_to, 
+        
+
+
 
 def defensive_matchups(multiplier_table, pokemon_types):
     ...
 
-
+def print_effectivenesses(se, neutral, nve):
+    print("Your moves are super effective against: ", se, '\n')
+    print("Your moves are neutral against: ", nve, '\n')
+    print("Your moves are resisted (or immuned by): ", nve, '\n')

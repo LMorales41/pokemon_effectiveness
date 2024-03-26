@@ -2,6 +2,7 @@ from src.type_functions import *
 from datascience import *
 import numpy as np
 
+
 #Set up all tables properly (eliminate unnecessary columns)
 types_table = Table.read_table('data/types.csv')
 pokemon_types = Table.read_table('data/pokemon_types.csv')
@@ -48,7 +49,10 @@ type_1 = pokemon_selected.column('type1')[0]
 type_2 = pokemon_selected.column('type2')[0]
 types_to_test = np.array([type_1, type_2])
 
+#testing_var = type_matchups(effective_chart, types_to_test, 'offense')
+#print(testing_var)
 
-
+super_effective, neutral, not_very_effective = type_matchups(effective_chart, types_to_test, 'offense')
+print_effectivenesses(super_effective, neutral, not_very_effective)
 
 #print("Your defensive spread:\n", "You resist: ", resistances, "\nYou are neutral against: ", neutral, "\nYou are weak against: ", weaknesses, "\nYour STAB covers: ", offense_spread)
