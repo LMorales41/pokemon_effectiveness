@@ -14,6 +14,31 @@ def remove_and_sort(arr):
     arr = sorted(set(arr))
     return arr
 
+def reformat_move(move):
+    reformatted_move = move.replace(' ', '-').lower()
+    return reformatted_move
+
+def check_move_legality(move, moves_tbl):
+    if (moves_tbl.where('move_name', are.equal_to(move)).num_rows >= 1):
+        return True
+    else:
+        return False
+
+def get_moveset_types(moveset, moves_tbl):
+    """Gets array with moves, returns array with their types"""
+    types_arr = []
+    for move in moveset:
+        types_arr.append(moves_tbl.where('move_name', are.equal_to(move)).column('type')[0])
+    return types_arr
+
+
+    
+def check_unique_move(moveset, move):
+    for x in moveset:
+        if x == move:
+            return False
+    
+    return True
 
 def id_into_string(type_id):
     """I will change an int into a string based on what type it is in the database, using a map/dictionary"""
@@ -42,6 +67,11 @@ def multiplier_conversion(multipliers):
     multipliers_converted = [conversions[num] for num in multipliers]
     return multipliers_converted
 
+def convert_damage_type(moves_col):
+    """I will change the spec/phys to represent the actual damage types"""
+    conversions = {1 : 'status', 2 : 'physical', 3: 'special' }
+    damage_type_converted = [conversions[num] for num in moves_col]
+    return damage_type_converted
 
 def remove_none(my_array):
     filtered_array = [item for item in my_array if 'none' not in item]
@@ -158,3 +188,6 @@ def print_resistances(se, neutral, nve):
 def resistances(effective_chart, types_to_test, purpose):
     super_effective, neutral, not_very_effective = type_matchups(effective_chart, types_to_test, purpose)
     print_resistances(super_effective, neutral, not_very_effective)
+
+
+    
