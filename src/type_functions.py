@@ -4,11 +4,14 @@
 ## 13 = electric 14 = psychic 15 = ice 16 = dragon
 ## 17 = dark 18 = fairy
 from datascience import *
+
 PKMN_TYPES = [
     'normal', 'fighting', 'flying', 'poison', 'ground', 'rock', 'bug', 'ghost', 
     'steel', 'fire', 'water', 'grass', 'electric', 'psychic', 'ice', 'dragon', 
     'dark', 'fairy'
 ]
+
+
 
 def remove_and_sort(arr):
     arr = sorted(set(arr))

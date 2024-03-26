@@ -1,5 +1,6 @@
 from src.type_functions import *
 from src.program import *
+from move_funcs import *
 from datascience import *
 import numpy as np
 
@@ -11,6 +12,7 @@ pkmn = Table.read_table('data/pokemon_species.csv')
 effective_chart = Table.read_table('data/type_efficacy.csv')
 pkmn = pkmn.select('id', 'identifier')
 moves = Table.read_table('data/moves.csv')
+learnable_moves = Table.read_table('data/pokemon_moves.csv')
 
 
 #First type should be guaranteed for every pokemon
@@ -53,6 +55,19 @@ moves = moves.where('type', are.below_or_equal_to(18))
 moves = moves.with_column('type', id_into_string(moves.column('type')))
 
 
+#Big boy table BE CAREFUL (its yuge)
+# original columns are: pokemon_id,version_group_id,move_id,pokemon_move_method_id,level,order
+# We want to erase unwanted columns, and change things to be as readable as possible
+# We will leave this table in ids, as changing them would be far, far too time consuming
+learnable_moves = learnable_moves.drop('version_group_id', 'pokemon_move_method_id', 'level', 'order')
+learnable_moves = learnable_moves.where('pokemon_id', are.below_or_equal_to(898))
+
+selected_mon_movepool = learnable_moves_for_selected(learnable_moves, moves ,6)
+
+print (selected_mon_movepool)
+
+
+
 """END OF SORTING DATA"""
 
 # I like squirtles
@@ -60,31 +75,9 @@ moves = moves.with_column('type', id_into_string(moves.column('type')))
 
 """BEGINNING OF PROGRAM"""
 #User selects pokemon, then we grab its matchups
+#intro_loop(pkmn_clean, effective_chart)
 
-#lc_pkmn = intro_loop(pkmn_clean, effective_chart)
-#lc_pkmn_types = get_types(pkmn_clean, lc_pkmn)
-#stab_effectivenesses(effective_chart, lc_pkmn_types, 'offense')
-#resistances(effective_chart, lc_pkmn_types, 'defensive')
+#User gives the pokemon a moveset, this checks its general coverage
+#moveset, moveset_types = get_moveset_info(moves)
+#stab_effectivenesses(effective_chart, moveset_types, 'offense')
 
-#User gives a moveset, this checks its general coverage
-move_count = input("How many moves will your Pokemon have?\n")
-move_count = int(move_count)
-moveset = []
-while len(moveset) < move_count:
-    my_move = input("Enter move: ")
-    my_move = reformat_move(my_move)
-    legality = check_move_legality(my_move, moves)
-    uniq_move = check_unique_move(moveset, my_move)
-    if (legality and uniq_move):
-        moveset.append(my_move)
-    else:
-        print("Adding that move is not legal, please enter again. ")
-
-moveset_types = get_moveset_types(moveset, moves)
-
-print(moveset)
-print(moveset_types)
-
-stab_effectivenesses(effective_chart, moveset_types, 'offense')
-#print(moves)
-    
