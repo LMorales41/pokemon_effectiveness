@@ -1,6 +1,6 @@
 from src.type_functions import *
 from src.program import *
-from move_funcs import *
+from src.move_funcs import *
 from datascience import *
 import numpy as np
 
@@ -62,11 +62,6 @@ moves = moves.with_column('type', id_into_string(moves.column('type')))
 learnable_moves = learnable_moves.drop('version_group_id', 'pokemon_move_method_id', 'level', 'order')
 learnable_moves = learnable_moves.where('pokemon_id', are.below_or_equal_to(898))
 
-selected_mon_movepool = learnable_moves_for_selected(learnable_moves, moves ,6)
-
-print (selected_mon_movepool)
-
-
 
 """END OF SORTING DATA"""
 
@@ -75,9 +70,7 @@ print (selected_mon_movepool)
 
 """BEGINNING OF PROGRAM"""
 #User selects pokemon, then we grab its matchups
-#intro_loop(pkmn_clean, effective_chart)
+intro_loop(pkmn_clean, effective_chart, moves, learnable_moves)
 
-#User gives the pokemon a moveset, this checks its general coverage
-#moveset, moveset_types = get_moveset_info(moves)
-#stab_effectivenesses(effective_chart, moveset_types, 'offense')
+
 

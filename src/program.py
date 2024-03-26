@@ -1,19 +1,30 @@
 from src.type_functions import *
+from src.move_funcs import *
 from datascience import *
 import numpy as np
 
-
-def intro_loop(pkmn_tbl, effective_chart):
+#Basic program loop
+def intro_loop(pkmn_tbl, effective_chart, moves, learnable_moves):
     while True:
         # Enter pokemon name
         selected_pokemon = input("Enter your selected Pokemon: ")
         lc_pkmn = selected_pokemon.lower()
         
-        # Check if the user wants to continue
+        # Complicatedness more like complicated MESS amirite xdddddddddddddddddddddd
         if pkmn_tbl.where('species', are.equal_to(lc_pkmn)).num_rows >= 1:
+            lc_pkmn_pokedex = pkmn_tbl.where('species', are.equal_to(lc_pkmn)).column('pokedex')[0]
             lc_pkmn_types = get_types(pkmn_tbl, lc_pkmn)
             #stab_effectivenesses(effective_chart, lc_pkmn_types, 'offense')
             resistances(effective_chart, lc_pkmn_types, 'defensive')
+            moveset_cont = input("Would you like to check the effectiveness of this Pokemon's moveset? (Y/N)")
+            if (moveset_cont == 'y' or moveset_cont == 'Y'):
+                #User gives the pokemon a moveset, this checks its general coverage
+                moveset, moveset_types = get_moveset_info(moves)
+                stab_effectivenesses(effective_chart, moveset_types, 'offense')
+            generate_cont = input("Would you like to generate a moveset for maximum coverage? (Y/N)")
+            if (generate_cont == 'y' or generate_cont == 'Y'):
+                pkmn_moveset_all = learnable_moves_for_selected(learnable_moves, moves, lc_pkmn_pokedex)
+                desired_moveset = generate_moveset(pkmn_moveset_all, moves)
             break
         else:
             print("That was not a valid pokemon, please try again! (Up to Gen 8 - Pokemon Sword and Shield, no forms!)")

@@ -13,4 +13,7 @@ def learnable_moves_for_selected(movepool_tbl, moves ,pokedex):
 
 def print_learnable_moves(move_tbl, selected_mon_movepool):
     for x in selected_mon_movepool:
-        print( move_tbl.where('move_id', are.equal_to(x)).column('move_name')[0] )
+        print( move_tbl.where('move_id', are.equal_to(x)).column('move_name')[0])
+
+def generate_moveset(pkmn_moveset, move_tbl):
+    print(move_tbl)
