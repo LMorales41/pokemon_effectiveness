@@ -22,10 +22,53 @@ def learnable_moves_string(move_tbl, moveset_int):
             move_names.append(move_tbl.where('move_id', are.equal_to(x)).column('move_name')[0])
         return move_names
 
-def generate_moveset(pkmn_moveset, move_tbl):
-    #print(move_tbl)
-    split = input("Will this pokemon be a special attacker or physical attacker? (1 for special, 2 for physical): ")
-    if (split == 'special'):
-        ...
-    else:
-        ...
+
+def get_preset_moves(move_tbl):
+    set_moves = []
+    flag1 = True
+    flag2 = True
+    while flag1:
+        #Get count of preset moves
+        while flag2:
+            try:
+                move_count = input("How many preset moves will your Pokemon have?\n")
+                move_count = int(move_count)
+                if move_count > 4:
+                    print("You cannot have more than 4 moves!")
+                    continue
+                flag2 = False
+            except ValueError:
+                print("That is not a valid integer, please try again.")
+        #End
+        
+        preset_moves = input("Enter a move you want to have in the generated moveset: ")
+        preset_moves = reformat_move(preset_moves)
+        if check_move_legality(preset_moves, move_tbl) == False:
+            print("Please enter a legal move.")
+            continue
+        if preset_moves not in set_moves:
+            set_moves.append(preset_moves)
+        if len(set_moves) >= move_count:
+            return set_moves
+
+
+def generate_moveset(move_tbl, learnable_moves_tbl, effective_chart):
+    set_moves = get_preset_moves(move_tbl)
+    moveset_all_types = get_move_types(set_moves, move_tbl)
+    moveset_all_types = remove_and_sort(moveset_all_types)
+
+    #Once preset is out the way, fill in the rest with moves with high coverage
+    for x in set_moves:
+        immunities = get_immunities(x, effective_chart)
+        resistances = get_resistances(x, effective_chart)
+    max_moves = 4
+    count = max_moves - len(set_moves)
+    append_these = get_most_cov_type(immunities, resistances, count, effective_chart)
+    for x in append_these:
+        set_moves.append(x)
+    print(set_moves)
+
+
+        
+
+    

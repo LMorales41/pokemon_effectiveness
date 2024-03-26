@@ -33,5 +33,3 @@ learnable_moves = setup_learnable_moves_table(learnable_moves)
     # Generated moveset for maximum coverage (theoretically) - not implemented yet
 
 intro_loop(pkmn_clean, effective_chart, moves, learnable_moves)
-#types_test = ['ghost', 'ground', 'poison', 'grass', 'fire']
-#generate_moveset(types_test, moves)

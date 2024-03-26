@@ -105,6 +105,17 @@ def binary_search(array, target):
 
 """Category 2 Functions: Specific use functions (Does not fit into above category); overall mostly custom functions that will only work in the scope of this project"""
 
+def get_resistances(type, effective_chart):
+    """Returns an array of resistances"""
+    return effective_chart.where('attacking_type', are.equal_to(type)).where('multiplier', are.equal_to(0.5)).column('defending_type')
+
+def get_immunities(type, effective_chart):
+    """Returns an array of immunities"""
+    return effective_chart.where('attacking_type', are.equal_to(type)).where('multiplier', are.equal_to(0)).column('defending_type')
+
+def get_supereffectives(type, effective_chart):
+    return effective_chart.where('attacking_type', are.equal_to(type)).where('multiplier', are.equal_to(2)).column('defending_type')
+
 
 def type_matchups(multiplier_table, pokemon_types, purpose):
     """Split into offense or defense so it can check proper column."""
@@ -318,41 +329,35 @@ def get_maximum_coverage (types_learned, effectiveness_chart):
     for type, covers_this_many_types in tuple_test:
         print(type, " can cover ", covers_this_many_types, " types")
 
-def get_preset_moves(move_tbl):
-    set_moves = []
-    flag1 = True
-    flag2 = True
-    while flag1:
-        #Get count of preset moves
-        while flag2:
-            try:
-                move_count = input("How many preset moves will your Pokemon have?\n")
-                move_count = int(move_count)
-                if move_count > 4:
-                    print("You cannot have more than 4 moves!")
-                    continue
-                flag2 = False
-            except ValueError:
-                print("That is not a valid integer, please try again.")
-        #End
-        
-        preset_moves = input("Enter a move you want to have in the generated moveset: ")
-        if check_move_legality(preset_moves, move_tbl) == False:
-            print("Please enter a legal move.")
-            continue
-        if preset_moves not in set_moves:
-            set_moves.append(preset_moves)
-        if len(set_moves) >= move_count:
-            return set_moves
 
+def get_most_cov_type(arr1, arr2, count ,effective_chart):
+    max_attacking_type = 'none'
+    max_coverage = 0
+    max_attacking_types =[]
+    while count > 0:
+        for attacking_type in arr1:
+            filtered_data = effective_chart.where('attacking_type', are.equal_to(attacking_type)).where('multplier', are.above_or_equal_to(1))
+            coverage = filtered_data.num_rows
+            max_attacking_type = attacking_type
+            if coverage > max_cov:
+                max_cov = coverage
+                max_attacking_type = attacking_type
 
-def generate_moveset(move_types, move_tbl):
-    set_moves = get_preset_moves(move_tbl)
-    print (set_moves)
-    
+        max_attacking_types.append(max_attacking_type)
+        count -= 1
 
-    
+        for attacking_type in arr2:
+            filtered_data = effective_chart.where('attacking_type', are.equal_to(attacking_type)).where('multplier', are.above_or_equal_to(1))
+            coverage = filtered_data.num_rows
+            max_attacking_type = attacking_type
+            if coverage > max_cov:
+                max_cov = coverage
+                max_attacking_type = attacking_type
+        max_attacking_types.append(max_attacking_type)
+        count -= 1
 
+    print(max_attacking_types)
+    return max_attacking_types
 
 
         
