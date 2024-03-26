@@ -22,7 +22,7 @@ def intro_loop(pkmn_tbl, effective_chart, moves, learnable_moves):
                 stab_effectivenesses(effective_chart, moveset_types, 'offense')
                 print("Your total movepool coverages: ")
                 moveset = learnable_moves_for_selected(learnable_moves, moves, lc_pkmn_pokedex)
-                print(moveset)
+                #print(moveset)
                 moveset_types = get_move_types(moveset, moves)
                 get_maximum_coverage(moveset_types, effective_chart)
             #generate_cont = input("Would you like to generate a moveset for maximum coverage? (Y/N)")

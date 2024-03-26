@@ -178,6 +178,34 @@ def defensive_matchups(multiplier_table, pokemon_types):
     return hit_super_effective_by, neutral, resist, immune_to
 
 
+def combine_multipliers(se, neutral, nve, immune):
+    multiplier = 1
+    mult_0x = []
+    mult_05x = []
+    mult_1x = []
+    mult_2x = []
+    for types in PKMN_TYPES:
+        if types in se:
+            multiplier *= 2
+        if types in neutral:
+            multiplier *= 1
+        if types in nve:
+            multiplier *= 0.5
+        if types in immune:
+            multiplier *= 0
+        if multiplier == 0:
+            mult_0x.append(types)
+        elif multiplier > 0 and multiplier < 1:
+            mult_05x.append(types)
+        elif multiplier > 1:
+            mult_2x.append(types)
+        else:
+            mult_1x.append(types)
+        multiplier = 1
+    return mult_2x, mult_1x, mult_05x, mult_0x
+
+
+
 def get_multiplier_value(a_type, d_type, effective_chart):
     """Returns multiplier value"""
     return effective_chart.where('attacking_type', are.equal_to(a_type)).where('defending_type', are.equal_to(d_type)).column('multiplier')[0]
@@ -204,7 +232,7 @@ def print_effectivenesses(se, neutral, nve, immune):
         print(x, end='')
         if x != len(nve) - 1:
             print(', ', end='')
-    print("\n")
+    
     print("\nYour moves cannot hit:", end='')
     for x in immune:
         print(x, end='')
@@ -249,6 +277,7 @@ def print_resistances(se, neutral, nve, immune):
 def stab_effectivenesses(effective_chart, types_to_test, purpose):
     """Combines type_matchups, offensive_matchups, and print_effectivenesses functions into one clean callable line"""
     super_effective, neutral, not_very_effective, immune = type_matchups(effective_chart, types_to_test, purpose)
+    super_effective, neutral, not_very_effective, immune = combine_multipliers(super_effective, neutral, not_very_effective, immune)
     print_effectivenesses(super_effective, neutral, not_very_effective, immune)
     return super_effective, neutral, not_very_effective, immune
 
@@ -256,6 +285,7 @@ def stab_effectivenesses(effective_chart, types_to_test, purpose):
 def resistances(effective_chart, types_to_test, purpose):
     """Combines type_matchups, defensive_matchups, and print_resistances functions into one clean callable line"""
     super_effective, neutral, not_very_effective, immune = type_matchups(effective_chart, types_to_test, purpose)
+    super_effective, neutral, not_very_effective, immune = combine_multipliers(super_effective, neutral, not_very_effective, immune)
     print_resistances(super_effective, neutral, not_very_effective, immune)
     return super_effective, neutral, not_very_effective, immune
 
@@ -288,39 +318,41 @@ def get_maximum_coverage (types_learned, effectiveness_chart):
     for type, covers_this_many_types in tuple_test:
         print(type, " can cover ", covers_this_many_types, " types")
 
+def get_preset_moves(move_tbl):
+    set_moves = []
+    flag1 = True
+    flag2 = True
+    while flag1:
+        #Get count of preset moves
+        while flag2:
+            try:
+                move_count = input("How many preset moves will your Pokemon have?\n")
+                move_count = int(move_count)
+                if move_count > 4:
+                    print("You cannot have more than 4 moves!")
+                    continue
+                flag2 = False
+            except ValueError:
+                print("That is not a valid integer, please try again.")
+        #End
+        
+        preset_moves = input("Enter a move you want to have in the generated moveset: ")
+        if check_move_legality(preset_moves, move_tbl) == False:
+            print("Please enter a legal move.")
+            continue
+        if preset_moves not in set_moves:
+            set_moves.append(preset_moves)
+        if len(set_moves) >= move_count:
+            return set_moves
 
-"""def combine_effectiveness_multipliers_offense(pokemon_types, effective_chart, se, neutral, nve):
-    \"""First, sort out whether resistances mean immunity (0x) or resistance (0.5x)\"""
-    mult_0x = []
-    mult_0_5x = []
-    for x in nve:
-        for y in pokemon_types:
-            if (get_multiplier_value(y, x, effective_chart) == 0):
-                mult_0x.append(x)
-            else:
-                mult_0_5x.append(x)
-    mult_0_5x = remove_and_sort(mult_0_5x)
-    mult_0x = remove_and_sort(mult_0x)
-    print('0x:', mult_0x)
-    print('0.5x', mult_0_5x)
 
-    mult_1x = []
-    mult_2x = []
+def generate_moveset(move_types, move_tbl):
+    set_moves = get_preset_moves(move_tbl)
+    print (set_moves)
+    
 
-def combine_effectiveness_multipliers_defense(pokemon_types, se, neutral, nve, effective_chart):
-    mult_0x = []
-    mult_0_5x = []
-    for x in nve:
-        for y in pokemon_types:
-            if (get_multiplier_value(x, y, effective_chart) == 0):
-                mult_0x.append(x)
-            else:
-                mult_0_5x.append(x)
-    mult_0_5x = remove_and_sort(mult_0_5x)
-    mult_0x = remove_and_sort(mult_0x)
-    mult_1x = []
-    mult_2x = []
+    
 
-    print(mult_2x, '\n', mult_1x, '\n', mult_0_5x, '\n', mult_0x )"""
+
 
         

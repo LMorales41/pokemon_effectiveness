@@ -33,10 +33,5 @@ learnable_moves = setup_learnable_moves_table(learnable_moves)
     # Generated moveset for maximum coverage (theoretically) - not implemented yet
 
 intro_loop(pkmn_clean, effective_chart, moves, learnable_moves)
-
-
-#se = ['electric', 'grass', 'ground', 'rock', 'water']
-#neutral = ['bug', 'dark', 'dragon', 'electric', 'fairy', 'fighting', 'flying', 'ghost', 'ground', 'normal', 'poison', 'psychic', 'rock']
-#nve = ['bug', 'fairy', 'fire', 'grass', 'ice', 'steel', 'water']
-
-#combine_effectiveness_multipliers_defense(types_to_test, se, neutral, nve, effective_chart)
+#types_test = ['ghost', 'ground', 'poison', 'grass', 'fire']
+#generate_moveset(types_test, moves)
