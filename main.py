@@ -44,15 +44,10 @@ effective_chart = effective_chart.with_columns('attacking_type', id_into_string(
 
 
 """BEGINNING OF PROGRAM"""
-pokemon_selected = pkmn_clean.where('species', are.equal_to('charizard'))
+pokemon_selected = pkmn_clean.where('species', are.equal_to('venusaur'))
 type_1 = pokemon_selected.column('type1')[0]
 type_2 = pokemon_selected.column('type2')[0]
 types_to_test = np.array([type_1, type_2])
 
-#testing_var = type_matchups(effective_chart, types_to_test, 'offense')
-#print(testing_var)
+stab_effectivenesses(effective_chart, types_to_test, 'offense')
 
-super_effective, neutral, not_very_effective = type_matchups(effective_chart, types_to_test, 'offense')
-print_effectivenesses(super_effective, neutral, not_very_effective)
-
-#print("Your defensive spread:\n", "You resist: ", resistances, "\nYou are neutral against: ", neutral, "\nYou are weak against: ", weaknesses, "\nYour STAB covers: ", offense_spread)

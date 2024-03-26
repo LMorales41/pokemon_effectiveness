@@ -12,6 +12,7 @@ PKMN_TYPES = [
 
 def remove_and_sort(arr):
     arr = sorted(set(arr))
+    return arr
 
 
 def id_into_string(type_id):
@@ -74,9 +75,9 @@ def offensive_matchups(multiplier_table, pokemon_types):
     #not_very_effective_against = types_table.where('multiplier', are.equal_to(0.5)).column('defending_type')
     #cannot_hit = resist_or_immune_to = types_table.where('multiplier', are.equal_to(0)).column('defending_type')
     #return super_effective_against, neutral_against, not_very_effective_against, cannot_hit
-    remove_and_sort(super_effective_against)
-    remove_and_sort(neutral_against)
-    remove_and_sort(resist_or_immune_to)
+    super_effective_against = remove_and_sort(super_effective_against)
+    neutral_against = remove_and_sort(neutral_against)
+    resist_or_immune_to = remove_and_sort(resist_or_immune_to)
     return super_effective_against, neutral_against, resist_or_immune_to, 
         
 
@@ -86,6 +87,27 @@ def defensive_matchups(multiplier_table, pokemon_types):
     ...
 
 def print_effectivenesses(se, neutral, nve):
-    print("Your moves are super effective against: ", se, '\n')
-    print("Your moves are neutral against: ", nve, '\n')
-    print("Your moves are resisted (or immuned by): ", nve, '\n')
+    print("Your moves are super effective against:", end=' ')
+    for x in se:
+        print(x, end='')
+        if x != len(se) - 1:
+            print(', ', end='')
+
+
+    print("\nYour moves are neutral against: ", end='')
+    for x in neutral:
+        print(x, end='')
+        if x != len(se) - 1:
+            print(', ', end='')
+
+    
+    print("\nYour moves are resisted (or immuned by):", end='')
+    for x in nve:
+        print(x, end='')
+        if x != len(se) - 1:
+            print(', ', end='')
+
+
+def stab_effectivenesses(effective_chart, types_to_test, purpose):
+    super_effective, neutral, not_very_effective = type_matchups(effective_chart, types_to_test, purpose)
+    print_effectivenesses(super_effective, neutral, not_very_effective)
