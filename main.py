@@ -44,10 +44,10 @@ effective_chart = effective_chart.with_columns('attacking_type', id_into_string(
 
 
 """BEGINNING OF PROGRAM"""
-pokemon_selected = pkmn_clean.where('species', are.equal_to('venusaur'))
+pokemon_selected = pkmn_clean.where('species', are.equal_to('porygon'))
 type_1 = pokemon_selected.column('type1')[0]
 type_2 = pokemon_selected.column('type2')[0]
 types_to_test = np.array([type_1, type_2])
 
 stab_effectivenesses(effective_chart, types_to_test, 'offense')
-
+resistances(effective_chart, types_to_test, 'defensive')
