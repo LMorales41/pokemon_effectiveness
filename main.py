@@ -2,6 +2,7 @@ from src.type_functions import *
 from src.program import *
 from src.move_funcs import *
 from src.setup_cleaning_funcs import *
+from src.favorite_analysis import *
 from datascience import *
 import numpy as np
 
@@ -16,8 +17,8 @@ types_table, pokemon_types, pkmn, effective_chart, moves, learnable_moves = setu
 # Cleaned up tables by changing names, adding/removing columns; overall made data more workable-with
 pkmn_clean = setup_pkmn_table(pkmn, pokemon_types)
 effective_chart = setup_effective_chart(effective_chart)
-moves = setup_moves_table(moves)
-learnable_moves = setup_learnable_moves_table(learnable_moves)
+#moves = setup_moves_table(moves)
+#learnable_moves = setup_learnable_moves_table(learnable_moves)
 
 
 """END OF SORTING DATA"""
@@ -32,4 +33,6 @@ learnable_moves = setup_learnable_moves_table(learnable_moves)
     # Its moveset type matchup
     # Generated moveset for maximum coverage (theoretically) - not implemented yet
 
-intro_loop(pkmn_clean, effective_chart, moves, learnable_moves)
+# intro_loop(pkmn_clean, effective_chart, moves, learnable_moves) 
+
+init_system(pkmn_clean)
